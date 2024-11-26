@@ -5,13 +5,17 @@
 typedef NTSTATUS(NTAPI* NtQueryTimerResolution_t)(PULONG MinimumResolution, PULONG MaximumResolution, PULONG CurrentResolution);
 
 int main() {
+#ifndef _DEBUG
     if (!IsAdmin()) {
         std::cerr << "Administrator privileges are required. The program will not function correctly and will now exit.\n";
         std::cout << "Press Enter to continue...\n";
         std::cin.get();
-
         return 0;
     }
+#else
+    std::cout << "[DEBUG] Administrator privilege check is skipped in debug mode.\n"
+        << "         Note: Some functionality might not work correctly without elevated permissions.\n\n";
+#endif
 
     int sleep_duration = 1;
 
