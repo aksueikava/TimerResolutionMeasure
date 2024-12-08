@@ -2,23 +2,25 @@
 #include "utils.h"
 
 bool IsAdmin() {
-    bool admin = false;
     HANDLE hToken = NULL;
-
-    if (OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &hToken)) {
-        TOKEN_ELEVATION elevation{};
-        DWORD size;
-        if (GetTokenInformation(hToken, TokenElevation, &elevation, sizeof(elevation), &size)) {
-            admin = elevation.TokenIsElevated;
-        }
-        CloseHandle(hToken);
+    if (!OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &hToken)) {
+        std::cerr << "Failed to open process token. Error: " << GetLastError() << std::endl;
+        return false;
     }
 
-    return admin;
+    std::unique_ptr<std::remove_pointer<HANDLE>::type, decltype(&CloseHandle)> tokenGuard(hToken, &CloseHandle);
+
+    TOKEN_ELEVATION elevation{};
+    DWORD size = 0;
+    if (!GetTokenInformation(hToken, TokenElevation, &elevation, sizeof(elevation), &size)) {
+        std::cerr << "Failed to get token information. Error: " << GetLastError() << std::endl;
+        return false;
+    }
+
+    return elevation.TokenIsElevated != 0;
 }
 
-AutoLibrary::AutoLibrary(const wchar_t* libName) {
-    handle = LoadLibraryW(libName);
+AutoLibrary::AutoLibrary(const wchar_t* libName) : handle(LoadLibraryW(libName)) {
     if (!handle) {
         DWORD error = GetLastError();
         std::wcerr << L"Failed to load library " << libName << L". Error code: " << error << std::endl;
@@ -32,7 +34,26 @@ AutoLibrary::~AutoLibrary() {
     }
 }
 
+AutoLibrary::AutoLibrary(AutoLibrary&& other) noexcept : handle(other.handle) {
+    other.handle = nullptr;
+}
+
+AutoLibrary& AutoLibrary::operator=(AutoLibrary&& other) noexcept {
+    if (this != &other) {
+        if (handle) {
+            FreeLibrary(handle);
+        }
+        handle = other.handle;
+        other.handle = nullptr;
+    }
+    return *this;
+}
+
 HMODULE AutoLibrary::get() const {
+    return handle;
+}
+
+AutoLibrary::operator HMODULE() const {
     return handle;
 }
 

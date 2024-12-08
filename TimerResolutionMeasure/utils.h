@@ -6,14 +6,20 @@ bool IsAdmin();
 
 class AutoLibrary {
 public:
-    AutoLibrary(const wchar_t* libName);
+    explicit AutoLibrary(const wchar_t* libName);
     ~AutoLibrary();
-    HMODULE get() const;
 
-    operator HMODULE() const { return handle; }
+    AutoLibrary(AutoLibrary&& other) noexcept;
+    AutoLibrary& operator=(AutoLibrary&& other) noexcept;
+
+    HMODULE get() const;
+    operator HMODULE() const;
 
 private:
     HMODULE handle;
+
+    AutoLibrary(const AutoLibrary&) = delete;
+    AutoLibrary& operator=(const AutoLibrary&) = delete;
 };
 
 void calculateStatistics(const std::vector<double>& delays, double& average, double& stdev);
