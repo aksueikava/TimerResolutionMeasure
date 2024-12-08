@@ -69,6 +69,14 @@ int main() {
     std::cin.get();
     sleep_delays.erase(sleep_delays.begin());
 
+    if (sleep_delays.size() < 3) {
+        std::cerr << "Not enough tests to calculate statistics. At least 3 tests are required.\n";
+        std::cout << "Results will not be calculated.\n";
+        std::cout << "\nPress Enter to exit...";
+        std::cin.get();
+        return 1;
+    }
+
     std::nth_element(sleep_delays.begin(), sleep_delays.begin() + sleep_delays.size() / 2, sleep_delays.end());
     std::sort(sleep_delays.begin(), sleep_delays.end());
 
