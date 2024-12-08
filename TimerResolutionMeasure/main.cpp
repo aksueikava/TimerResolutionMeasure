@@ -40,7 +40,8 @@ int main() {
         return 1;
     }
 
-    std::cout << "Press Enter to stop the cycle and calculate results...\n";
+    std::cout << "[INFO] Press Enter to stop the cycle and calculate results.\n"
+        << "        Measurements will continue until input is detected.\n\n";
 
     while (!_kbhit()) {
         NTSTATUS status = NtQueryTimerResolution(&minimum_resolution, &maximum_resolution, &current_resolution);
