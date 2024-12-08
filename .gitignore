@@ -1,0 +1,40 @@
+# Ignore CMake-related files
+CMakeLists.txt.user
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+Testing/
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps/
+CMakePresets.json
+CMakeUserPresets.json
+
+# Ignore Visual Studio files
+.vs/
+.vs2019/
+.vs2022/
+.idea/
+
+# Ignore build directories
+build/
+out/
+
+# Ignore Visual Studio configuration files
+*.user
+*.userosscache
+*.suo
+*.sdf
+*.opensdf
+*.vssscc
+*.vsscc
+
+# Ignore temporary files and backups
+*.log
+*.tmp
+*.bak
+*.swp
+*~
